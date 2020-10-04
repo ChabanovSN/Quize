@@ -32,11 +32,9 @@ namespace SecondForms
             mListBox.Items.Clear();
             foreach (string file in files)
             {
-                string title = file.Remove(0, file.LastIndexOf('/') + 1);
-                title = title.Remove(title.IndexOf('.'));
+                string title = Path.GetFileNameWithoutExtension(file);               
                 mapTest[title] = file;
                 mListBox.Items.Add(title.PadLeft(48));
-
 
             }
 

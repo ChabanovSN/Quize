@@ -11,7 +11,7 @@ namespace SecondForms
     public class WindowTestEdit : Form
     {
         private GroupBox groupBox1;
-    
+
         private Button NextTestBtn;
         private Button PrevTestBtn;
         private Button SaveTestBtn;
@@ -23,25 +23,18 @@ namespace SecondForms
         private Button ChangeThemaName;
         private Label titleNumberTest;
         private Label numberTest;
-        List<Test> tests = new List<Test>(); 
+        List<Test> tests = new List<Test>();
         int index = 0;
         bool addBool = false;
-        string Path { get; set; }
-        string ThemeFromPath="";
+        string PathToFile { get; set; }
+        string ThemeFromPath = "";
         public WindowTestEdit(string path)
         {
-            // TestRun test = new TestRun(mapTest[selectedTheme]);
-            //  Console.WriteLine("111" + mapTest[selectedTheme]);
-            //test._Write();
-            Path = path;
-                tests.AddRange(TestRun.ReadFile(path));
-                
-           
-          
-            ThemeFromPath = Path.Remove(0, Path.LastIndexOf('/') + 1);
-            ThemeFromPath = ThemeFromPath.Remove(ThemeFromPath.IndexOf('.'));           
+
+            PathToFile = path;
+            tests.AddRange(TestRun.ReadFile(path));
+            ThemeFromPath = Path.GetFileNameWithoutExtension(path);           
             InitializeRadioButtons();
-          
 
         }
         public void InitializeRadioButtons()
@@ -54,7 +47,7 @@ namespace SecondForms
             this.question = new TextBox
             {
                 Location = new Point(30, 30),
-               
+
             };
             ThemaLabel = new Label
             {
@@ -66,22 +59,23 @@ namespace SecondForms
             {
                 Location = new Point(100, 5),
                 Width = 220,
-                Text  = ThemeFromPath
+                Text = ThemeFromPath
 
             };
 
-            ChangeThemaName = new Button {
+            ChangeThemaName = new Button
+            {
                 Location = new Point(350, 5),
-                Text     = "Сменить название темы",
-                 Width = 250
+                Text = "Сменить название темы",
+                Width = 250
             };
             ChangeThemaName.Click += ChangeThemaName_Click;
 
 
-        titleNumberTest = new Label
+            titleNumberTest = new Label
             {
-                Location = new Point(30,55),
-                Text     = "Номер теста"
+                Location = new Point(30, 55),
+                Text = "Номер теста"
             };
             numberTest = new Label
             {
@@ -100,9 +94,9 @@ namespace SecondForms
             Controls.Add(ChangeThemaName);
             Controls.Add(titleNumberTest);
             Controls.Add(numberTest);
-           
 
-           
+
+
             this.PrevTestBtn = new Button
             {
                 Location = new Point(30, 370),
@@ -119,20 +113,20 @@ namespace SecondForms
             };
             this.NextTestBtn.Click += NextTest_Click;
 
-             AddTestBtn = new Button
-             {
-                 Location = new Point(355, 370),
-                 Size = new Size(140, 25),
-                 Text = "Добавить"
-             };
+            AddTestBtn = new Button
+            {
+                Location = new Point(355, 370),
+                Size = new Size(140, 25),
+                Text = "Добавить"
+            };
             this.AddTestBtn.Click += Add_Test_Click;
-        
-           RemoveTestBtn = new Button
-           {
-               Location = new Point(525, 370),
-               Size = new Size(140, 25),
-               Text = "Удалить"
-           };
+
+            RemoveTestBtn = new Button
+            {
+                Location = new Point(525, 370),
+                Size = new Size(140, 25),
+                Text = "Удалить"
+            };
             this.RemoveTestBtn.Click += Remove_Test_Click;
 
 
@@ -159,17 +153,8 @@ namespace SecondForms
         void ChangeThemaName_Click(object sender, EventArgs e)
         {
 
-            int ind = 0;
-          
-                //поиск индекса последнего слеша
-                ind = Path.LastIndexOf('/');
-            //переименование
-            string newName = Path.Remove(ind + 1) + Thema.Text + ".json";
-           //    MessageBox.Show($"{Path} {ind} {newName}");
-           File.Move(Path, newName);
-            Path = newName;
-           // MessageBox.Show($"{Path} {ind} {newName}");
-
+            PathToFile = FileHelper.RenameFile(PathToFile, Thema.Text + ".json");
+           
         }
 
 
@@ -184,8 +169,8 @@ namespace SecondForms
             if (tests?.Count > 0 && index < tests?.Count)
             {
 
-                   question.Text = " " + tests[index].Qustion;               
-               foreach (var t in tests[index].ListsOfAnswers)
+                question.Text = " " + tests[index].Qustion;
+                foreach (var t in tests[index].ListsOfAnswers)
                 {
 
                     CheckBox check = new CheckBox
@@ -195,21 +180,23 @@ namespace SecondForms
                         Name = "check" + row.ToString(),
                         Checked = (t.Value ? true : false)
                     };
-                                    
-            
+
+
                     TextBox answer = new TextBox
-                    { Size = new Size(650, 30),
+                    {
+                        Size = new Size(650, 30),
                         Location = new Point(x + 30, y),
                         Text = t.Key,
                         Name = "answer" + row.ToString()
-                    };                   
+                    };
                     this.groupBox1.Controls.Add(check);
-                    this.groupBox1.Controls.Add(answer);                  
+                    this.groupBox1.Controls.Add(answer);
                     y += 40; row++;
                 }
-             
 
-            }else if (addBool)
+
+            }
+            else if (addBool)
             {
                 this.question.Text = "Вопрос";
 
@@ -220,7 +207,7 @@ namespace SecondForms
                         Size = new Size(20, 25),
                         Location = new Point(x, y),
                         Name = "check" + row.ToString(),
-                       
+
                     };
 
                     TextBox answer = new TextBox
@@ -232,34 +219,31 @@ namespace SecondForms
                     this.groupBox1.Controls.Add(check);
                     this.groupBox1.Controls.Add(answer);
                     y += 40; row++;
-                } 
+                }
             }
         }
 
-        void EditCreateListTests()
+       bool EditCreateListTests()
         {
             try
             {
-
-
                 Test test = new Test
                 {
                     Qustion = ((TextBox)Controls["Qustion"]).Text.Trim(),
 
-                };           
-                for (int i = 0; i < groupBox1.Controls.Count/2; i++)
+                };
+                for (int i = 0; i < groupBox1.Controls.Count / 2; i++)
                 {
-                    CheckBox check = (CheckBox)groupBox1.Controls["check"+(i+1).ToString()];
-                    TextBox newAns = (TextBox)groupBox1.Controls["answer"+ (i + 1).ToString()];
+                    CheckBox check = (CheckBox)groupBox1.Controls["check" + (i + 1).ToString()];
+                    TextBox newAns = (TextBox)groupBox1.Controls["answer" + (i + 1).ToString()];
                     Console.WriteLine($" {newAns.Text.Trim()}   {check.Checked}");
                     test.ListsOfAnswers[newAns.Text.Trim()] = check.Checked ? true : false;
                 }
-                Console.WriteLine($" tests.Count {tests.Count}");
-                if(test.ListsOfAnswers.Count != 4 || test.Qustion.Length==0)
+              
+                if (test.ListsOfAnswers.Count != 4 || test.Qustion.Length == 0)
                 {
                     MessageBox.Show("Ответы одинаковые или есть пустные поля");
-                  
-                    return;
+                    return false;
                 }
 
                 if (test.Qustion.Length > 0)
@@ -272,85 +256,82 @@ namespace SecondForms
                     }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
+
                 Console.WriteLine(e.Message);
+                return false;
             }
-          
 
+            return true;
         }
-        void Change_Thema_Click(object sender, EventArgs e) {
-            int ind = 0;
 
-                //поиск индекса последнего слеша
-                ind = Path.LastIndexOf('\\');
-            //переименование
-            MessageBox.Show(Path);
-              //  File.Move(Path, Path.Remove(ind + 1) + ThemeFromPath + ".json");
-           
-
-        }
         void Add_Test_Click(object sender, EventArgs e)
-    {
+        {
             AddTestBtn.Text = "Потвердить";
 
             if (addBool)
             {
-                EditCreateListTests();
-                addBool = false;
+                if (EditCreateListTests())
+                    addBool = false;
             }
             else
             {
                 addBool = true;
-                index = tests.Count;              
+                index = tests.Count;
                 NextTest();
             }
-    }
-    void Remove_Test_Click(object sender, EventArgs e)
-    {
+        }
+        void Remove_Test_Click(object sender, EventArgs e)
+        {
             tests.RemoveAt(index);
             if (index >= tests.Count) index = tests.Count - 1;
             NextTest();
-    }
-    void PrevTest_Click(object sender, EventArgs e)
-        {
-            EditCreateListTests();
-            --index;
-            if (index < 0) index = tests.Count - 1;       
-            NextTest();
         }
-            
-            void NextTest_Click(object sender, EventArgs e)
+        void PrevTest_Click(object sender, EventArgs e)
         {
-              EditCreateListTests();           
-              index = (index + 1) % tests.Count;           
-              NextTest();
+            if (EditCreateListTests())
+            {
+                --index;
+                if (index < 0) index = tests.Count - 1;
+                NextTest();
+            }
+        }
+
+        void NextTest_Click(object sender, EventArgs e)
+        {
+            if (EditCreateListTests())
+            {
+                index = (index + 1) % tests.Count;
+                NextTest();
+            }
         }
 
         void SaveTest_Click(object sender, EventArgs e)
         {
-            EditCreateListTests();
-            _Write();
-            Form ifrm = Application.OpenForms[0];
-            if (ifrm is Quiz quiz)
+            if (EditCreateListTests())
             {
-                quiz.ShoosFile_Click();
-                quiz.Show();
-                this.Close();
+                _Write();
+                Form ifrm = Application.OpenForms[0];
+                if (ifrm is Quiz quiz)
+                {
+                    quiz.ShoosFile_Click();
+                    quiz.Show();
+                    this.Close();
+                }
             }
-        
         }
         void _Write()
         {
-            using (FileStream fs = new FileStream(Path, FileMode.Create))
+            using (FileStream fs = new FileStream(PathToFile, FileMode.Create))
             {
                 byte[] jsonUtf8Bytes;
                 var options = new JsonSerializerOptions
                 {
                     WriteIndented = true,
-                    
+
                 };
-                        
+
                 jsonUtf8Bytes = JsonSerializer.SerializeToUtf8Bytes(tests, options);
                 fs.Write(jsonUtf8Bytes, 0, jsonUtf8Bytes.Length);
 
@@ -358,5 +339,30 @@ namespace SecondForms
         }
 
     }
+    public static class FileHelper
+    {
+        public static string RenameFile(string oldFilenameWithPathWithExtension, string newFilenameWithoutPathWithExtension)
+        {
+            try
+            {
+                string directoryPath = Path.GetDirectoryName(oldFilenameWithPathWithExtension);
+                if (directoryPath == null)
+                {
+                    throw new Exception($"Директоря не обнаруженна: {oldFilenameWithPathWithExtension}");
+                }
 
+                var newFilenameWithPath = Path.Combine(directoryPath, newFilenameWithoutPathWithExtension);
+                FileInfo fileInfo = new FileInfo(oldFilenameWithPathWithExtension);
+               
+                fileInfo.MoveTo(newFilenameWithPath);
+                return newFilenameWithPath;
+            }
+            catch (Exception e)
+            {               
+                Console.WriteLine(e);
+                return oldFilenameWithPathWithExtension;
+               
+            }
+        }
+    }
 }
