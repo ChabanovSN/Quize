@@ -23,7 +23,7 @@ namespace SecondForms
 
         }
 
-        private void ShoosFile_Click()
+        public void ShoosFile_Click()
         {
             string path = @"/home/doka/Рабочий стол/Tests";// textBox1.Text;
                                                            // получаем все файлы
@@ -44,41 +44,25 @@ namespace SecondForms
         }
         void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string selectedTheme = mListBox.SelectedItem.ToString().Trim();
             if (editFileBool == false)
             {
-                string selectedTheme = mListBox.SelectedItem.ToString().Trim();
-                TestRun test = new TestRun(mapTest[selectedTheme]);
-                // test._Write();
-                List<Test> tests = test.GetListTests();
-                if (tests != null)
-                {
-                    WindowTest windowTest = new WindowTest(tests);
-                    windowTest.Show();
-                    this.Hide();
-                }
-                else
-                    // this.Hide();
-                    MessageBox.Show("Файл пуст!");
+                List<string> paths = new List<string>();
+                paths.Add(mapTest[selectedTheme]);
+                WindowTest windowTest = new WindowTest(paths);
+                windowTest.Show();
+                this.Hide();
             }
+           
             else
-            {
-                string selectedTheme = mListBox.SelectedItem.ToString().Trim();
+            {              
 
                 if (selectedTheme.Length > 0)
-                {
-                    TestRun test = new TestRun(mapTest[selectedTheme]);
-                    Console.WriteLine("111" + mapTest[selectedTheme]);
-                    //test._Write();
-                    List<Test> tests = test.GetListTests();
-                    if (tests != null)
-                    {
-                        WindowTestEdit windowTest = new WindowTestEdit(tests, mapTest[selectedTheme]);
-                        windowTest.Show();
-                        this.Hide();
-                    }
-                    else
-                        // this.Hide();
-                        MessageBox.Show("Тестов нет!");
+                {                  
+                    WindowTestEdit windowTest = new WindowTestEdit(mapTest[selectedTheme]);
+                    windowTest.Show();
+                    this.Hide();
+                   
                 }
             }
         }

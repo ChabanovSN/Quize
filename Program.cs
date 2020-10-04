@@ -49,7 +49,7 @@ namespace SecondForms
 
             try
             {
-                // Application.Run(new Form2());
+                // Application.Run(new Form3());
               
                 Application.Run(new Quiz());
             }

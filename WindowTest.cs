@@ -7,20 +7,26 @@ namespace SecondForms
 {
     public class WindowTest : Form
     {
-        private GroupBox groupBox1;
-        private RadioButton selectedrb;
-        private Button getSelectedRB;
+        private CheckedListBox CheckedListBoxTest;     
+        private Button AnswerdBtn;
         private Label question;
+        private Label titleNumberTest;
+        private Label numberTest;
         private Label titleScore;
         private Label score;
 
-        List<Test> tests;
+        List<Test> tests =new List<Test>();
         int index = 0;
         int rezultScore = 0;
-        internal WindowTest(List<Test> t)
+        public WindowTest(List<string> paths)
         {
-            tests = t;
+            foreach (var path in paths)
+            {
+                tests.AddRange(TestRun.ReadFile(path));
+            }
             InitializeRadioButtons();
+
+            CheckedListBoxTest.CheckOnClick = true;
         }
         public void InitializeRadioButtons()
         {
@@ -37,30 +43,47 @@ namespace SecondForms
             {
                 Location = new Point(200, 370),
                 Size = new Size(120, 25),
-                Text = "Результат(%)"
+                Text = "Верно "
 
             };
             score = new Label
             {
                 Location = new Point(330, 370),
-                Size = new Size(40, 25),
+                Size = new Size(100, 25),
                 Text = "0"
 
             };
+                     
+            CheckedListBoxTest = new CheckedListBox {
+               Location = new Point(30, 65),
+               Size = new Size(800, 300),
+            
+        };
 
-            this.groupBox1 = new GroupBox();
-            Controls.Add(this.question);
-            this.getSelectedRB = new Button();
-            this.groupBox1.Location = new Point(30, 65);
-            this.groupBox1.Size = new Size(800, 300);
-            this.getSelectedRB.Location = new Point(30, 370);
-            this.getSelectedRB.Size = new Size(150, 25);
-            this.getSelectedRB.Text = "Ответить";
-            this.getSelectedRB.Click += getSelectedRB_Click;
 
-            this.ClientSize = new Size(850, 420);
-            this.Controls.Add(this.groupBox1);
-            Controls.Add(this.getSelectedRB);
+            Controls.Add(question);
+            titleNumberTest = new Label
+            {
+                Location = new Point(30, 40),
+                Text = "Номер теста"
+            };
+            numberTest = new Label
+            {
+                Location = new Point(200, 40),
+                Text = "1"
+            };
+            this.AnswerdBtn = new Button
+            {
+                Location = new Point(30, 370),
+                Size = new Size(150, 25),
+                Text = "Ответить"
+            };
+            AnswerdBtn.Click += Answered_Click;
+            ClientSize = new Size(850, 420);
+            Controls.Add(titleNumberTest);
+            Controls.Add(numberTest);
+            Controls.Add(CheckedListBoxTest);
+            Controls.Add(AnswerdBtn);
             Controls.Add(titleScore);
             Controls.Add(score);
             NextTest();
@@ -75,25 +98,14 @@ namespace SecondForms
                 this.question.Width = 800;
                 this.question.Height = 35;
                 this.question.Text = " " + tests[index].Qustion;
-
-                // this.groupBox1.Text = "Radio Buttons";
-                int x = 30, y = 40;
-                this.groupBox1.Controls.Clear();
+                numberTest.Text = (index + 1).ToString();
+                CheckedListBoxTest.Items.Clear();
+               
                 foreach (var t in tests[index].ListsOfAnswers)
                 {
-                    if (t.Key.Length > 0)
-                    {
-                        RadioButton radio = new RadioButton
-                        {
-                            Location = new Point(x, y)
-                        };
-                        y += 40 + t.Key.Length / 300;
-                        radio.Size = new Size(67, 17);
-                        radio.Width = 300;
-                        radio.Text = t.Key;
-                        radio.CheckedChanged += radioButton_CheckedChanged;
-                        this.groupBox1.Controls.Add(radio);
-                    }
+                    if (t.Key.Length > 0)                      
+                        CheckedListBoxTest.Items.Add("  "+t.Key);
+                
                 }
 
             }
@@ -101,55 +113,63 @@ namespace SecondForms
         }
 
 
-        void radioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            RadioButton rb = sender as RadioButton;
+       
 
-            if (rb == null)
+    
+        void Answered_Click(object sender, EventArgs e)
+        {
+            if (AnswerdBtn.Text == "Mеню")
             {
-                MessageBox.Show("Sender is not a RadioButton");
-               // return;
+                Form ifrm = Application.OpenForms[0];
+                ifrm.Show();
+                this.Close();
+                return;
             }
 
-            // Ensure that the RadioButton.Checked property
-            // changed to true.
-            if (rb.Checked)
+            if (CheckedListBoxTest.CheckedItems.Count==0)
             {
-                // Keep track of the selected RadioButton by saving a reference
-                // to it.
-                selectedrb = rb;
+                MessageBox.Show(" Нужно выбрать ответ");
+                return;
             }
-        }
 
-        // Show the text of the selected RadioButton.
-        void getSelectedRB_Click(object sender, EventArgs e)
-        {
-            if (selectedrb != null)
+            bool rezult = false;
+            foreach (var item in CheckedListBoxTest.Items)
             {
+                if (                 
+                  CheckedListBoxTest.GetItemCheckState(CheckedListBoxTest.Items.IndexOf(item)) 
+                                                                      == CheckState.Checked
+                  & tests[index].ListsOfAnswers[item.ToString().Trim()] != true
+                                                                      )
+                {
+                    rezult = false;
+                    break;
+                }else
+                 if(
+                    CheckedListBoxTest.GetItemCheckState(CheckedListBoxTest.Items.IndexOf(item))
+                                                                      == CheckState.Unchecked
+                  & tests[index].ListsOfAnswers[item.ToString().Trim()] == true
+                )
+                {
+                    rezult = false;
+                    break;
+                }else
+                rezult = true;
+            }
+         
 
-                if (index <tests.Count) {                   
-                        rezultScore += tests[index].ListsOfAnswers[selectedrb.Text];                  
+                if (index <tests.Count) { 
+                     if(rezult)                  
+                        rezultScore++;                  
 
-                    score.Text = (rezultScore * 20 / tests.Count).ToString();
+                    score.Text = $"{rezultScore.ToString()} из {tests.Count}";
                     index++;
                     if(index== tests.Count)
-                        this.getSelectedRB.Text = "Mеню";
+                        this.AnswerdBtn.Text = "Mеню";
                     else
                     NextTest();
                 }
-                else
-                {
-                    if (getSelectedRB.Text == "Mеню") { 
-                    Form ifrm = Application.OpenForms[0];
-                    ifrm.Show();
-                    this.Close();
-                    }
-                  }
-
-                //MessageBox.Show(selectedrb.Text);
-            }
-            else
-                MessageBox.Show(" Нужно выбрать ответ");
+               
+            
         }
     }
 

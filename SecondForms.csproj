@@ -68,9 +68,6 @@
     <Reference Include="GSF.Windows">
       <HintPath>..\packages\GSF.Windows.2.3.302\lib\net46\GSF.Windows.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Reactive.Windows.Forms" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Design" />
@@ -131,6 +128,38 @@
     <Reference Include="System.Private.DataContractSerialization">
       <HintPath>..\packages\System.Private.DataContractSerialization.4.3.0\lib\netstandard1.3\System.Private.DataContractSerialization.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNetCore.Metadata">
+      <HintPath>..\packages\Microsoft.AspNetCore.Metadata.3.1.8\lib\netstandard2.0\Microsoft.AspNetCore.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.3.1.8\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.3.1.8\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.7.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="Microsoft.Extensions.Primitives">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.3.1.8\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options">
+      <HintPath>..\packages\Microsoft.Extensions.Options.3.1.8\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Authorization">
+      <HintPath>..\packages\Microsoft.AspNetCore.Authorization.3.1.8\lib\netstandard2.0\Microsoft.AspNetCore.Authorization.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.JSInterop">
+      <HintPath>..\packages\Microsoft.JSInterop.3.1.8\lib\netstandard2.0\Microsoft.JSInterop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components">
+      <HintPath>..\packages\Microsoft.AspNetCore.Components.3.1.8\lib\netstandard2.0\Microsoft.AspNetCore.Components.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Components.Forms">
+      <HintPath>..\packages\Microsoft.AspNetCore.Components.Forms.3.1.8\lib\netstandard2.0\Microsoft.AspNetCore.Components.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -152,6 +181,7 @@
     <Compile Include="TestRun.cs" />
     <Compile Include="WindowTest.cs" />
     <Compile Include="WibdowTestEdit.cs" />
+    <Compile Include="CheckBoxExample.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -167,4 +197,5 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <Import Project="..\packages\Microsoft.AspNetCore.Components.Analyzers.3.1.8\build\netstandard2.0\Microsoft.AspNetCore.Components.Analyzers.targets" Condition="Exists('..\packages\Microsoft.AspNetCore.Components.Analyzers.3.1.8\build\netstandard2.0\Microsoft.AspNetCore.Components.Analyzers.targets')" />
 </Project>
