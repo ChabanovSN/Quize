@@ -8,60 +8,98 @@ namespace SecondForms
 {
     public class Quiz : Form
     {
-        private ListBox mListBox;
+        private CheckedListBox CheckedListBoxTest;
+        private User CurrentUser = null;
         private ToolStrip toolStrip1;
         private ToolStripButton mCreatFiles;
         private ToolStripButton mEditFiles;
         private  bool editFileBool = false;
+        private Button StartBtn;
+        string PathToDir { get; set; } = @"/home/doka/Рабочий стол/Store/Tests";
+        private string PathToFileAuth { get; set; } = @"/home/doka/Рабочий стол/Store/auth.json";
         readonly Dictionary<string, string> mapTest = new Dictionary<string, string>();
         public Quiz()
         {
             InitializeComponent();
-            mListBox.DrawMode = DrawMode.OwnerDrawFixed;
-            mListBox.DrawItem += ListBox_DrawItem;
+            CheckedListBoxTest.CheckOnClick = true;
+            CheckedListBoxTest.DrawMode = DrawMode.OwnerDrawFixed;
+            CheckedListBoxTest.DrawItem += ListBox_DrawItem;
             ShoosFile_Click();
 
         }
+        public void SetUser(User user)
+        {
+            CurrentUser = user;
+            StartBtn.Click += Start_Click;           
 
+            if (user.IsAdmin)
+            {
+                toolStrip1.Show();
+                this.mEditFiles.Click += EditTest;
+
+            }
+
+
+        }
+        void Check_User_Click(object sender, EventArgs e)
+        {  
+            if(CurrentUser == null)
+            {
+                Authorization authorization = new Authorization(PathToFileAuth);
+                authorization.Show();
+                this.Hide();
+
+            }
+           
+
+        }
         public void ShoosFile_Click()
         {
-            string path = @"/home/doka/Рабочий стол/Tests";// textBox1.Text;
+            // textBox1.Text;
                                                            // получаем все файлы
-            string[] files = Directory.GetFiles(path);
+            string[] files = Directory.GetFiles(PathToDir);
             // перебор полученных файлов
-            mListBox.Items.Clear();
+            CheckedListBoxTest.Items.Clear();
             foreach (string file in files)
             {
                 string title = Path.GetFileNameWithoutExtension(file);               
                 mapTest[title] = file;
-                mListBox.Items.Add(title.PadLeft(48));
+                CheckedListBoxTest.Items.Add(title.PadLeft(48));
 
             }
 
 
         }
-        void ListBox_SelectedIndexChanged(object sender, EventArgs e)
+        void Start_Click(object sender, EventArgs e)
         {
-            string selectedTheme = mListBox.SelectedItem.ToString().Trim();
             if (editFileBool == false)
             {
-                List<string> paths = new List<string>();
-                paths.Add(mapTest[selectedTheme]);
-                WindowTest windowTest = new WindowTest(paths);
-                windowTest.Show();
-                this.Hide();
-            }
-           
-            else
-            {              
-
-                if (selectedTheme.Length > 0)
-                {                  
-                    WindowTestEdit windowTest = new WindowTestEdit(mapTest[selectedTheme]);
+                if (CheckedListBoxTest.CheckedItems.Count > 0)
+                {
+                    List<string> paths = new List<string>();
+                    for (int i = 0; i < CheckedListBoxTest.CheckedItems.Count; i++)
+                    {
+                        paths.Add(mapTest[CheckedListBoxTest.CheckedItems[i].ToString().Trim()]);
+                    }
+                    WindowTest windowTest = new WindowTest(paths);
                     windowTest.Show();
                     this.Hide();
-                   
                 }
+                else
+                    MessageBox.Show("Нужно выбрать тему");
+            }
+            else
+            {
+
+                if (CheckedListBoxTest.CheckedItems.Count > 0)
+                {
+                    WindowTestEdit windowTest = new WindowTestEdit(mapTest[CheckedListBoxTest.CheckedItems[0].ToString().Trim()]);
+                    windowTest.Show();
+                    this.Hide();
+                }
+                else
+                    MessageBox.Show("Нужно выбрать тему для редактирования");
+
             }
         }
 
@@ -72,15 +110,21 @@ namespace SecondForms
             if (editFileBool)
             {
                 mEditFiles.Text = "Отключить редактирование";
-                mListBox.DrawItem -= ListBox_DrawItem;
-                mListBox.DrawItem += ListBox_DrawItem_Gray;
+                CheckedListBoxTest.DrawItem -= ListBox_DrawItem;
+                CheckedListBoxTest.DrawItem += ListBox_DrawItem_Gray;
+                StartBtn.Hide();
                 ShoosFile_Click();
+                StartBtn.Click -= Start_Click;
+                CheckedListBoxTest.SelectedIndexChanged += Start_Click;
             }
             else
             {
                 mEditFiles.Text = "Редактировать";
-                mListBox.DrawItem += ListBox_DrawItem;
-                mListBox.DrawItem -= ListBox_DrawItem_Gray;
+                CheckedListBoxTest.DrawItem += ListBox_DrawItem;
+                CheckedListBoxTest.DrawItem -= ListBox_DrawItem_Gray;
+                StartBtn.Show();
+                CheckedListBoxTest.SelectedIndexChanged -= Start_Click;
+                StartBtn.Click += Start_Click;
                 ShoosFile_Click();
             }
 
@@ -88,35 +132,45 @@ namespace SecondForms
 
         }
         void CreateTest(object sender, EventArgs e)
-        {
-
-            MessageBox.Show("Файл create!");
+        {   
+            AddNewFileForm addNew = new AddNewFileForm(PathToDir);
+            addNew.Show();
+            this.Hide();          
         }
 
         private void InitializeComponent()
         {
+          
             var currentSize = Font.SizeInPoints;
             currentSize += 3;
             BackColor = Color.Aqua;
             Font = new Font(Font.Name, currentSize, Font.Style);
             System.ComponentModel.ComponentResourceManager resources =
               new System.ComponentModel.ComponentResourceManager(typeof(Form2));
-            this.mListBox = new System.Windows.Forms.ListBox();
+            CheckedListBoxTest = new CheckedListBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            mCreatFiles = new System.Windows.Forms.ToolStripButton();
+            mCreatFiles = new System.Windows.Forms.ToolStripButton();           
             mEditFiles = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             //
-            // mListBox
+            //CheckedListBoxTest
             //
-            this.mListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mListBox.FormattingEnabled = false;
-            this.mListBox.Location = new System.Drawing.Point(50, 50);
-            this.mListBox.Name = "mListBox";
-            this.mListBox.Size = new System.Drawing.Size(230, 230);
-            this.mListBox.TabIndex = 0;
-            this.mListBox.SelectedIndexChanged += ListBox_SelectedIndexChanged;
+            CheckedListBoxTest.Dock = System.Windows.Forms.DockStyle.Fill;
+            CheckedListBoxTest.FormattingEnabled = false;
+            CheckedListBoxTest.Location = new System.Drawing.Point(50, 50);
+            CheckedListBoxTest.Name = "mListBox";
+            CheckedListBoxTest.Size = new System.Drawing.Size(230, 200);
+            CheckedListBoxTest.TabIndex = 0;
+            //
+            StartBtn = new Button
+            {
+                Location = new Point(20, 205),
+                Text = "Старт"
+            };
+            StartBtn.Click += Check_User_Click;
+         
+            Controls.Add(StartBtn);
             //
             // toolStrip1
             //
@@ -136,7 +190,8 @@ namespace SecondForms
             this.mEditFiles.Name = "Edit";
             this.mEditFiles.Size = new System.Drawing.Size(148, 22);
             mEditFiles.Text = "Редактировать";
-            this.mEditFiles.Click += EditTest;
+            this.mEditFiles.Click += Check_User_Click;
+           
             //mCreatFiles
             this.mCreatFiles.ImageTransparentColor =
                System.Drawing.Color.Azure;
@@ -144,15 +199,16 @@ namespace SecondForms
             this.mCreatFiles.Size = new System.Drawing.Size(148, 22);
             mCreatFiles.Text = "Добавить новый";
             this.mCreatFiles.Click += CreateTest;
+            
 
             //////
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 264);
-            this.Controls.Add(this.mListBox);
+            this.Controls.Add(CheckedListBoxTest);
             this.Controls.Add(this.toolStrip1);
-
+            toolStrip1.Hide();
             this.Name = "Quiz";
             this.Text = "Quiz";
             this.toolStrip1.ResumeLayout(false);
@@ -169,10 +225,15 @@ namespace SecondForms
 
                 using (Brush textBrush = new SolidBrush(e.ForeColor))
                 {
-                    e.Graphics.DrawString(mListBox.Items[e.Index].ToString(), e.Font, textBrush, e.Bounds.Location);
+                    e.Graphics.DrawString(CheckedListBoxTest.Items[e.Index].ToString(), e.Font, textBrush, e.Bounds.Location);
                 }
             }
         }
+
+        void StartBtn_Click(object sender, EventArgs e)
+        {
+        }
+
 
         void ListBox_DrawItem_Gray(object sender, DrawItemEventArgs e)
         {
@@ -183,7 +244,7 @@ namespace SecondForms
 
                 using (Brush textBrush = new SolidBrush(e.ForeColor))
                 {
-                    e.Graphics.DrawString(mListBox.Items[e.Index].ToString(), e.Font, textBrush, e.Bounds.Location);
+                    e.Graphics.DrawString(CheckedListBoxTest.Items[e.Index].ToString(), e.Font, textBrush, e.Bounds.Location);
                 }
             }
         }

@@ -26,15 +26,17 @@ namespace SecondForms
         List<Test> tests = new List<Test>();
         int index = 0;
         bool addBool = false;
-        string PathToFile { get; set; }
+        string PathToFile { get; set; } = "";
         string ThemeFromPath = "";
         public WindowTestEdit(string path)
         {
 
             PathToFile = path;
-            tests.AddRange(TestRun.ReadFile(path));
-            ThemeFromPath = Path.GetFileNameWithoutExtension(path);           
-            InitializeRadioButtons();
+         
+                tests.AddRange(TestRun.ReadFile(path));
+         
+           ThemeFromPath = Path.GetFileNameWithoutExtension(path);           
+           InitializeRadioButtons();
 
         }
         public void InitializeRadioButtons()
@@ -146,14 +148,13 @@ namespace SecondForms
             Controls.Add(AddTestBtn);
             Controls.Add(RemoveTestBtn);
             Controls.Add(SaveTestBtn);
-
             NextTest();
         }
 
         void ChangeThemaName_Click(object sender, EventArgs e)
         {
 
-            PathToFile = FileHelper.RenameFile(PathToFile, Thema.Text + ".json");
+            PathToFile = FileHelper.RenameFile(PathToFile, Thema.Text);
            
         }
 
@@ -312,7 +313,7 @@ namespace SecondForms
             if (EditCreateListTests())
             {
                 _Write();
-                Form ifrm = Application.OpenForms[0];
+                Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
                 if (ifrm is Quiz quiz)
                 {
                     quiz.ShoosFile_Click();
@@ -339,10 +340,92 @@ namespace SecondForms
         }
 
     }
+
+    class AddNewFileForm: Form
+    {
+        private TextBox NameFile;
+        private Button AddFile;
+        private Button Cancel;
+        private string path;
+        public AddNewFileForm(string path) {
+            this.path = path;
+            Init();
+         }
+       private void Init() {
+            NameFile = new TextBox {
+                Text = "Тема",
+                Location = new Point(10, 50),
+                Size = new Size(240, 25)
+              };
+            AddFile = new Button { 
+              Text = "Добавить",
+                Location = new Point(10, 100),
+                Size = new Size(100, 25)
+
+            };
+            AddFile.Click += AddTest_Click;
+            Cancel = new Button
+            {
+                Text = "Отменить",
+                Location = new Point(150, 100),
+                Size = new Size(100, 25)
+
+            };
+            Cancel.Click += Cancel_Click;
+            Controls.AddRange( new Control[]{ NameFile, AddFile, Cancel });
+        }
+
+        void AddTest_Click(object sender, EventArgs e)
+        {
+          string newFilePath=  FileHelper.BulderPath(path, NameFile.Text.Trim());
+           List<Test> tests = new List<Test>();
+                        Test test = new Test
+                        {
+                            Qustion = "Вопрос",
+                            ListsOfAnswers = new Dictionary<string, bool>()
+                        {
+            ["Ответ1"]= true,
+            ["Отве2"] = false,
+            ["Ответ3"] = false,
+            ["Ответ4"] =false 
+                }
+            };
+                tests.Add(test);
+
+
+            using (FileStream fs = new FileStream(newFilePath, FileMode.OpenOrCreate))
+            {
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+
+                };
+             
+                byte[] jsonUtf8Bytes = JsonSerializer.SerializeToUtf8Bytes(tests, options);
+                fs.Write(jsonUtf8Bytes, 0, jsonUtf8Bytes.Length);
+            }
+        
+            WindowTestEdit edit = new WindowTestEdit(newFilePath);
+            edit.Show();
+            this.Hide();
+        }
+        void Cancel_Click(object sender, EventArgs e)
+        {
+            Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
+            if (ifrm is Quiz quiz)
+            {
+                quiz.ShoosFile_Click();
+                quiz.Show();
+                this.Close();
+            }
+        }
+    }
     public static class FileHelper
     {
-        public static string RenameFile(string oldFilenameWithPathWithExtension, string newFilenameWithoutPathWithExtension)
+        public static string RenameFile(string oldFilenameWithPathWithExtension, string newFilenameWithoutExtension)
         {
+            newFilenameWithoutExtension += ".json";
             try
             {
                 string directoryPath = Path.GetDirectoryName(oldFilenameWithPathWithExtension);
@@ -351,7 +434,7 @@ namespace SecondForms
                     throw new Exception($"Директоря не обнаруженна: {oldFilenameWithPathWithExtension}");
                 }
 
-                var newFilenameWithPath = Path.Combine(directoryPath, newFilenameWithoutPathWithExtension);
+                var newFilenameWithPath = Path.Combine(directoryPath, newFilenameWithoutExtension);
                 FileInfo fileInfo = new FileInfo(oldFilenameWithPathWithExtension);
                
                 fileInfo.MoveTo(newFilenameWithPath);
@@ -362,6 +445,21 @@ namespace SecondForms
                 Console.WriteLine(e);
                 return oldFilenameWithPathWithExtension;
                
+            }
+        }
+        public static string BulderPath(string PathToDir, string newFilenameWithoutExtension)
+        {
+            newFilenameWithoutExtension += ".json";
+            try
+            {        
+              
+                return Path.Combine(PathToDir, newFilenameWithoutExtension); ;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return "";
+
             }
         }
     }

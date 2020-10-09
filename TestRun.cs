@@ -37,30 +37,30 @@ namespace SecondForms
         {
 
             List<Test> tests = null;
-            string text2 = File.ReadAllText(path, Encoding.UTF8);
+          
+           
+                try
+                {
+                    string text2 = File.ReadAllText(path, Encoding.UTF8);
+                    // byte[] jsonUtf8Bytes = Encoding.UTF8.GetBytes(text2);
 
-            try
-            {
+                    //  var utf8Reader = new Utf8JsonReader(jsonUtf8Bytes);
+                    // tests = JsonSerializer.Deserialize<List<Test>>(text2);
+                    // ReadListTest(tests);
+                    //  return tests;
+                    return tests = JsonSerializer.Deserialize<List<Test>>(text2);
 
-                // byte[] jsonUtf8Bytes = Encoding.UTF8.GetBytes(text2);
+                }
+                catch (System.Text.Json.JsonException e)
+                {
+                   
+                    Console.WriteLine("JsonException  internal List<Test> ReadFile()\n " + e);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception  internal List<Test> ReadFile()\n " + e.InnerException);
 
-                //  var utf8Reader = new Utf8JsonReader(jsonUtf8Bytes);
-                // tests = JsonSerializer.Deserialize<List<Test>>(text2);
-                // ReadListTest(tests);
-                //  return tests;
-                return tests = JsonSerializer.Deserialize<List<Test>>(text2);
-
-            }
-            catch (System.Text.Json.JsonException e)
-            {
-                tests = null;
-                Console.WriteLine("JsonException  internal List<Test> ReadFile()\n " + e);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception  internal List<Test> ReadFile()\n " + e.InnerException);
-
-            }
+                }
 
             return tests;
 

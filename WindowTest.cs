@@ -120,7 +120,7 @@ namespace SecondForms
         {
             if (AnswerdBtn.Text == "Mеню")
             {
-                Form ifrm = Application.OpenForms[0];
+                Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
                 ifrm.Show();
                 this.Close();
                 return;
