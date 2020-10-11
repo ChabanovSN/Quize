@@ -21,7 +21,10 @@ namespace SecondForms
      
         string Thema = null;
         public WindowTest(List<string> paths, User user)
-        {   if (paths.Count == 1)
+        {
+            if (Application.OpenForms["WindowTest"] != null) return;
+        
+        if (paths.Count == 1)
               Thema=  Path.GetFileNameWithoutExtension(paths[0]);
         
          
@@ -37,6 +40,7 @@ namespace SecondForms
         }
         public void InitializeRadioButtons()
         {
+            Name = "WindowTest";
             var currentSize = Font.SizeInPoints;
             currentSize += 3;
             Font = new Font(Font.Name, currentSize,

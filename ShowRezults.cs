@@ -10,7 +10,7 @@ namespace SecondForms
             this.Text = $"Результаты викторины для {user.Login}";
             ListBox listBox1 = new ListBox
             {
-                Size = new System.Drawing.Size(375, 255),
+                Size = new System.Drawing.Size(395, 255),
                 Location = new System.Drawing.Point(10, 10)
             };
             listBox1.ScrollAlwaysVisible = true;
@@ -22,7 +22,7 @@ namespace SecondForms
                 listBox1.Items.Add($"{x++}: Тема {item.Key} максимальный балл {item.Value}");
             }       
             listBox1.EndUpdate();
-            this.ClientSize = new System.Drawing.Size(384, 264);
+            this.ClientSize = new System.Drawing.Size(404, 264);
         }
     }
 }

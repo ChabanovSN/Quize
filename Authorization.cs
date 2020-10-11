@@ -19,9 +19,10 @@ namespace SecondForms
         private Button LoginBtn;
         private Button RegBtn;
         private Button SaveBtn;
-        public Authorization(string path)
+        private User correctUser;
+        public Authorization(string path,User user=null)
         {
-
+            correctUser = user;
             PathToFile = path;
             _Read();
             Init();
@@ -39,19 +40,24 @@ namespace SecondForms
             {
                 Location = new Point(width, 70),
                 Size = new Size(width, 25),
-               Text = "",
-           
-             PasswordChar = '*',
-            
-             MaxLength = 14
+                 Text = "",           
+                  PasswordChar = '*',            
+                   MaxLength = 14
 
         };
+
+
+
+
             datePicker = new DateTimePicker
             {
                 Location = new Point(width, 100),
                 Size = new Size(width, 25)
             };
             datePicker.Hide();
+
+           
+
             LoginBtn = new Button
             {
                 Location = new Point(width,180),
@@ -76,42 +82,85 @@ namespace SecondForms
             SaveBtn.Hide();
             Controls.AddRange(new Control[] 
             {LoginText, PaswordText,datePicker, LoginBtn, RegBtn,SaveBtn });
+            if (correctUser != null)
+            {
+               
+                try
+                {
+                    LoginText.Text = correctUser.Login;
+                    PaswordText.Text = correctUser.Password;
+                  
+                 var v = DateTime.Parse(correctUser.BDay);
+                    Console.WriteLine(v.Date);
+                    datePicker.Value = v.Date;
+                    RegBtn_Click(null, null);
+                }
+                catch
+                {
+                    Console.WriteLine("Error Date");
+                }
+            }
 
 
         }
 
         void SaveBtn_Click(object sender, EventArgs e)
         {
-            foreach (User u in users)
+         if (correctUser == null)
             {
-                if (u.Login == LoginText.Text.Trim())
+                foreach (User u in users)
                 {
-                    MessageBox.Show("Пользователь с таким именем уже существует");
+                    if (u.Login == LoginText.Text.Trim())
+                    {
+                        MessageBox.Show("Пользователь с таким именем уже существует");
+                        return;
+                    }
+
+                }
+                if (PaswordText.Text.Trim().Length < 5)
+                {
+                    MessageBox.Show("Пароль не меньше 6 символов");
                     return;
                 }
 
+                User user = new User
+                {
+                    Login = LoginText.Text.Trim(),
+                    Password = PaswordText.Text.Trim(),
+                    BDay = datePicker.ToString()
+                };
+                users.Add(user);
+                correctUser = user;
             }
-            if (PaswordText.Text.Trim().Length < 5)
+            else
             {
-                MessageBox.Show("Пароль не меньше 6 символов");
-                return;
+                if (PaswordText.Text.Trim().Length < 5)
+                {
+                    MessageBox.Show("Пароль не меньше 6 символов");
+                    return;
+                }
+                for (int i = 0; i <users.Count; i++)
+                {
+                    if(users[i].Login == correctUser.Login)
+                    {
+                        correctUser.Login= users[i].Login = LoginText.Text.Trim();
+                        correctUser.Password=  users[i].Password = PaswordText.Text.Trim();
+                        correctUser.BDay=  users[i].BDay = datePicker.ToString();
+                        break;
+                    }
+                }
             }
 
-            User user = new User
-            {
-                Login = LoginText.Text.Trim(),
-                Password = PaswordText.Text.Trim(),
-                BDay = datePicker.ToString()
-            };
-            users.Add(user);
-            _Write();         
-            if (CheckUser(user.Login, user.Password) != null)
+            _Write();
+            if (CheckUser(correctUser.Login, correctUser.Password) != null)
             {
                 Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
-                ifrm.SetUser(user);
+                ifrm.SetUser(correctUser);
                 ifrm.Show();
                 this.Close();
             }
+            else
+                Console.WriteLine("Ошибка при редактировании");
         }
 
 
@@ -164,7 +213,7 @@ namespace SecondForms
 
         void _Write()
         {
-            using (FileStream fs = new FileStream(PathToFile, FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(PathToFile, FileMode.Create))
             {
                 byte[] jsonUtf8Bytes;
                 var options = new JsonSerializerOptions
@@ -172,12 +221,13 @@ namespace SecondForms
                     WriteIndented = true,
 
                 };
-                if (users.Count == 0) {
+                if (users.Count == 0) {           
                     User user = new User
                     {
                         Login = "admin",
                         Password = "admin",
-                        IsAdmin = true
+                        IsAdmin = true,
+                        BDay = "11 \u043E\u043A\u0442\u044F\u0431\u0440\u044F 2020 \u0433."
                     };
                     users.Add(user);
                 }

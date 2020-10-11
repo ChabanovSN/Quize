@@ -18,6 +18,7 @@ namespace SecondForms
         private Button ShowRezultBtn;
         private Button Top20Btn;
         private Button ChangeUserBtn;
+        private Button SettingBtn;
         string PathToDir { get; set; } = @"/home/doka/Рабочий стол/Store/Tests";
         private string PathToFileAuth { get; set; } = @"/home/doka/Рабочий стол/Store/auth.json";
         readonly Dictionary<string, string> mapTest = new Dictionary<string, string>();
@@ -147,7 +148,7 @@ namespace SecondForms
             addNew.Show();
             this.Hide();
         }
-       void ShowRezultBtn_Click(object sender, EventArgs e)
+        void ShowRezultBtn_Click(object sender, EventArgs e)
         {
             if (CurrentUser != null)
             {
@@ -159,19 +160,21 @@ namespace SecondForms
         }
         void ChangeUserBtn_Click(object sender, EventArgs e)
         {
-              //  CurrentUser = null;
-                if(authorization ==null)
-                authorization = new Authorization(PathToFileAuth);
-            else {
-                Authorization ifrm = (SecondForms.Authorization)Application.OpenForms["Authorization"];
-                ifrm.Show();
+
+                Authorization changeUser = new Authorization(PathToFileAuth);
+                changeUser.Show();
                 this.Hide();
+                      
+        }
+        void SettingBtn_Click(object sender, EventArgs e)
+        {
+            if (CurrentUser != null)
+            {
+                Authorization setting = new Authorization(PathToFileAuth,CurrentUser);
+                setting.Show();
             }
-
-            authorization.Show();
-                this.Hide();
-
-           
+            else
+                Check_User_Click(null, null);
         }
 
 
@@ -227,11 +230,20 @@ namespace SecondForms
             {
                 Location = new Point(2, h - 60),
                 Text = "Сменить пользователя",
-                Width = w -19
+                Width = w -50
               
             };
             ChangeUserBtn.Click +=ChangeUserBtn_Click;
             Controls.Add(ChangeUserBtn);
+            SettingBtn = new Button
+            {
+                Location = new Point(w - 30, h - 60),
+                Text = "Настройки",
+                Width = 30
+
+            };
+            SettingBtn.Click += SettingBtn_Click;
+            Controls.Add(SettingBtn);
             //
             // toolStrip1
             //
@@ -277,6 +289,9 @@ namespace SecondForms
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+
+
         void ListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index > -1)
