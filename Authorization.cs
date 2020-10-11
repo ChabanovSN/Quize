@@ -28,7 +28,7 @@ namespace SecondForms
 
         }
         void Init() {
-
+            Name = "Authorization";
             int width = this.Width / 2-50;
             LoginText = new TextBox {
                 Location = new Point(width, 40),
@@ -131,7 +131,7 @@ namespace SecondForms
                 Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
                 ifrm.SetUser(user);
                 ifrm.Show();
-                this.Close();
+                this.Hide();
             }
             else {
                 MessageBox.Show("Неверный логин и пароль");
@@ -140,7 +140,17 @@ namespace SecondForms
 
         }
 
+        public void WriteRezult(User user)
+        {
+            for (int i = 0; i < users.Count; i++)
+            {
+                if(users[i].Login == user.Login) {
+                    users[i] = user;
+                }
 
+            }
+            _Write();
+        }
         public User CheckUser(string login,string password) {
         
               foreach(User user in users) {
@@ -213,5 +223,21 @@ namespace SecondForms
         public string Password { get; set; }
         public string BDay { get; set; } = "";
         public bool IsAdmin { get; set; } = false;
+        public Dictionary<string,int> Results { get; set; }
+        public User()
+        {
+            Results = new Dictionary<string, int>();
+        }
+        public void Add(string thema, int score)
+        {
+            if (score == 0 || IsAdmin) return;
+            if (Results.ContainsKey(thema))
+            {
+                if (score > Results[thema])
+                    Results[thema] = score;
+            }
+            else
+                Results.Add(thema, score);
+        }
     }
 }

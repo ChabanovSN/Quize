@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
+using System.IO;
 namespace SecondForms
 {
     public class WindowTest : Form
@@ -14,12 +14,19 @@ namespace SecondForms
         private Label numberTest;
         private Label titleScore;
         private Label score;
-
+        private User user;
         List<Test> tests =new List<Test>();
         int index = 0;
         int rezultScore = 0;
-        public WindowTest(List<string> paths)
-        {
+     
+        string Thema = null;
+        public WindowTest(List<string> paths, User user)
+        {   if (paths.Count == 1)
+              Thema=  Path.GetFileNameWithoutExtension(paths[0]);
+        
+         
+
+            this.user = user;
             foreach (var path in paths)
             {
                 tests.AddRange(TestRun.ReadFile(path));
@@ -37,8 +44,9 @@ namespace SecondForms
             this.question = new Label
             {
                 Location = new Point(30, 5),
-              
-            };
+                Width = 800,
+                Height = 35
+        };
             titleScore = new Label
             {
                 Location = new Point(200, 370),
@@ -95,8 +103,7 @@ namespace SecondForms
             if (tests?.Count > 0 && index < tests?.Count)
             {
 
-                this.question.Width = 800;
-                this.question.Height = 35;
+               
                 this.question.Text = " " + tests[index].Qustion;
                 numberTest.Text = (index + 1).ToString();
                 CheckedListBoxTest.Items.Clear();
@@ -120,7 +127,21 @@ namespace SecondForms
         {
             if (AnswerdBtn.Text == "Mеню")
             {
+               
                 Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
+                if (Thema !=null)
+                {
+                    try
+                    {
+                        user.Add(Thema, rezultScore);
+                        ifrm.SetUser(user);
+                        ifrm.WriteRezult();
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine(" format exception in Windwow Test");
+                    }
+                }
                 ifrm.Show();
                 this.Close();
                 return;

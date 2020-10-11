@@ -15,9 +15,14 @@ namespace SecondForms
         private ToolStripButton mEditFiles;
         private  bool editFileBool = false;
         private Button StartBtn;
+        private Button ShowRezultBtn;
+        private Button Top20Btn;
+        private Button ChangeUserBtn;
         string PathToDir { get; set; } = @"/home/doka/Рабочий стол/Store/Tests";
         private string PathToFileAuth { get; set; } = @"/home/doka/Рабочий стол/Store/auth.json";
         readonly Dictionary<string, string> mapTest = new Dictionary<string, string>();
+        Authorization authorization;
+
         public Quiz()
         {
             InitializeComponent();
@@ -30,8 +35,8 @@ namespace SecondForms
         public void SetUser(User user)
         {
             CurrentUser = user;
-            StartBtn.Click += Start_Click;           
-
+            StartBtn.Click += Start_Click;
+            this.Text = $"{user.Login} участвует в Викторине";
             if (user.IsAdmin)
             {
                 toolStrip1.Show();
@@ -41,11 +46,16 @@ namespace SecondForms
 
 
         }
+       public  void WriteRezult() {
+            if (authorization != null)
+                authorization.WriteRezult(CurrentUser);
+       }
+
         void Check_User_Click(object sender, EventArgs e)
         {  
             if(CurrentUser == null)
             {
-                Authorization authorization = new Authorization(PathToFileAuth);
+                authorization = new Authorization(PathToFileAuth);
                 authorization.Show();
                 this.Hide();
 
@@ -81,7 +91,7 @@ namespace SecondForms
                     {
                         paths.Add(mapTest[CheckedListBoxTest.CheckedItems[i].ToString().Trim()]);
                     }
-                    WindowTest windowTest = new WindowTest(paths);
+                    WindowTest windowTest = new WindowTest(paths,CurrentUser);
                     windowTest.Show();
                     this.Hide();
                 }
@@ -135,8 +145,35 @@ namespace SecondForms
         {   
             AddNewFileForm addNew = new AddNewFileForm(PathToDir);
             addNew.Show();
-            this.Hide();          
+            this.Hide();
         }
+       void ShowRezultBtn_Click(object sender, EventArgs e)
+        {
+            if (CurrentUser != null)
+            {
+                ShowRezults rezults = new ShowRezults(CurrentUser);
+                rezults.Show();
+            }
+            else
+                Check_User_Click(null, null);
+        }
+        void ChangeUserBtn_Click(object sender, EventArgs e)
+        {
+              //  CurrentUser = null;
+                if(authorization ==null)
+                authorization = new Authorization(PathToFileAuth);
+            else {
+                Authorization ifrm = (SecondForms.Authorization)Application.OpenForms["Authorization"];
+                ifrm.Show();
+                this.Hide();
+            }
+
+            authorization.Show();
+                this.Hide();
+
+           
+        }
+
 
         private void InitializeComponent()
         {
@@ -165,12 +202,36 @@ namespace SecondForms
             //
             StartBtn = new Button
             {
-                Location = new Point(20, 205),
+                Location = new Point(25, 205),
                 Text = "Старт"
             };
             StartBtn.Click += Check_User_Click;
          
             Controls.Add(StartBtn);
+
+           ShowRezultBtn = new Button
+            {
+                Location = new Point(105, 205),
+                Text = "Результаты"
+            };
+            ShowRezultBtn.Click += ShowRezultBtn_Click;
+            Controls.Add(ShowRezultBtn);
+            Top20Btn = new Button
+            {
+                Location = new Point(185, 205),
+                Text = "Top 20"
+            };
+            Controls.Add(Top20Btn);
+            int h = Height, w = Width;
+            ChangeUserBtn = new Button
+            {
+                Location = new Point(2, h - 60),
+                Text = "Сменить пользователя",
+                Width = w -19
+              
+            };
+            ChangeUserBtn.Click +=ChangeUserBtn_Click;
+            Controls.Add(ChangeUserBtn);
             //
             // toolStrip1
             //
@@ -210,7 +271,7 @@ namespace SecondForms
             this.Controls.Add(this.toolStrip1);
             toolStrip1.Hide();
             this.Name = "Quiz";
-            this.Text = "Quiz";
+           
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);

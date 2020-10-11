@@ -183,6 +183,7 @@
     <Compile Include="WibdowTestEdit.cs" />
     <Compile Include="CheckBoxExample.cs" />
     <Compile Include="Authorization.cs" />
+    <Compile Include="ShowRezults.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
