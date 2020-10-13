@@ -34,12 +34,26 @@ namespace SecondForms
             {
                 tests.AddRange(TestRun.ReadFile(path));
             }
+            Random random = new Random();
+            for (int i = tests.Count - 1; i >= 1; i--)
+            {
+                int j = random.Next(i + 1);    
+                var temp = tests[j];
+                tests[j] = tests[i];
+                tests[i] = temp;
+            }
+            if (tests.Count < 20)
+                tests = tests.GetRange(0, tests.Count);
+            else
+                tests = tests.GetRange(0, 20);
+
             InitializeRadioButtons();
 
             CheckedListBoxTest.CheckOnClick = true;
         }
         public void InitializeRadioButtons()
         {
+            StartPosition = FormStartPosition.CenterScreen;
             Name = "WindowTest";
             var currentSize = Font.SizeInPoints;
             currentSize += 3;

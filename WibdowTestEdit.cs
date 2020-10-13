@@ -41,6 +41,7 @@ namespace SecondForms
         }
         public void InitializeRadioButtons()
         {
+            StartPosition = FormStartPosition.CenterScreen;
             var currentSize = Font.SizeInPoints;
             currentSize += 3;
             Font = new Font(Font.Name, currentSize,
@@ -352,6 +353,7 @@ namespace SecondForms
             Init();
          }
        private void Init() {
+            StartPosition = FormStartPosition.CenterScreen;
             NameFile = new TextBox {
                 Text = "Тема",
                 Location = new Point(10, 50),
@@ -461,6 +463,11 @@ namespace SecondForms
                 return "";
 
             }
+        }
+        public static void DeleteFile(string PathToFile)
+        {
+            FileInfo fileInfo = new FileInfo(PathToFile);
+            fileInfo.Delete();
         }
     }
 }

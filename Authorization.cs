@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -12,10 +13,13 @@ namespace SecondForms
     {
         private List<User> users = new List<User>();
         private string PathToFile { get; set; }
-        
+        private Label LoginLabel;
         private TextBox LoginText;
         private TextBox PaswordText;
+        private Label PaswordLabel;
         private DateTimePicker datePicker;
+        private Label DateLabel;
+
         private Button LoginBtn;
         private Button RegBtn;
         private Button SaveBtn;
@@ -29,29 +33,46 @@ namespace SecondForms
 
         }
         void Init() {
+            StartPosition = FormStartPosition.CenterScreen;
             Name = "Authorization";
             int width = this.Width / 2-50;
-            LoginText = new TextBox {
+            LoginLabel = new Label
+            {
                 Location = new Point(width, 40),
+                Size = new Size(width, 25),
+                Text = "Логин"
+            };
+            LoginText = new TextBox {
+                Location = new Point(width, 70),
                 Size = new Size(width,25)
                };
-
+          PaswordLabel = new Label
+            {
+                Location = new Point(width, 100),
+                Size = new Size(width, 25),
+                Text = "Пароль"
+            };
             PaswordText = new TextBox
             {
-                Location = new Point(width, 70),
+                Location = new Point(width, 130),
                 Size = new Size(width, 25),
                  Text = "",           
                   PasswordChar = '*',            
                    MaxLength = 14
 
         };
-
-
+            DateLabel = new Label
+            {
+                Location = new Point(width, 160),
+                Size = new Size(width, 25),
+                Text = "Дата рождения"
+            };
+            DateLabel.Hide();
 
 
             datePicker = new DateTimePicker
             {
-                Location = new Point(width, 100),
+                Location = new Point(width, 190),
                 Size = new Size(width, 25)
             };
             datePicker.Hide();
@@ -60,28 +81,29 @@ namespace SecondForms
 
             LoginBtn = new Button
             {
-                Location = new Point(width,180),
+                Location = new Point(width,210),
                 Size = new Size(width, 25),
                 Text ="Авторизация"
             };
             LoginBtn.Click +=LoginBtn_Click;
             RegBtn = new Button
             {
-                Location = new Point(width, 210),
+                Location = new Point(width, 240),
                 Size = new Size(width, 25),
                 Text = "Регистрация"
             };
             RegBtn.Click +=RegBtn_Click;
             SaveBtn = new Button
             {
-                Location = new Point(width, 210),
+                Location = new Point(width, 240),
                 Size = new Size(width, 25),
                 Text = "Сохранить"
             };
             SaveBtn.Click +=SaveBtn_Click;
             SaveBtn.Hide();
             Controls.AddRange(new Control[] 
-            {LoginText, PaswordText,datePicker, LoginBtn, RegBtn,SaveBtn });
+            {LoginText, PaswordText,datePicker, LoginBtn, 
+            RegBtn,SaveBtn, LoginLabel,PaswordLabel,DateLabel });
             if (correctUser != null)
             {
                
@@ -169,6 +191,7 @@ namespace SecondForms
             LoginBtn.Hide();
             SaveBtn.Show();
             datePicker.Show();
+            DateLabel.Show();
             RegBtn.Hide();
         }
 
@@ -264,10 +287,29 @@ namespace SecondForms
             }       
 
         }
-
+        public List<User> GetTop20(string thema)
+        {
+            List<User> usersTop = new List<User>();
+            foreach (var user in users)
+            {
+                if (user.Results.ContainsKey(thema)) {
+                    User u = new User
+                    {
+                        Login = user.Login,
+                    };
+                    u.Add(thema, user.Results[thema]);
+                    Console.WriteLine($"{thema} {user.Results[thema]}");
+                    usersTop.Add(u);
+                }
+            }
+            usersTop.Sort();
+            if(usersTop.Count<20)
+                return usersTop.GetRange(0, usersTop.Count);
+            return usersTop.GetRange(0, 20);
+        }
 
     }
-    public class User
+    public class User:IComparable<User>
     {
         public string Login { get; set; }
         public string Password { get; set; }
@@ -288,6 +330,12 @@ namespace SecondForms
             }
             else
                 Results.Add(thema, score);
+        }
+
+
+        public int CompareTo(User u)
+        {
+            return -Results.Values.First().CompareTo(u.Results.Values.First());
         }
     }
 }
