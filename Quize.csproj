@@ -172,16 +172,10 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EmptyClass.cs" />
-    <Compile Include="LightsController.cs" />
-    <Compile Include="Form1.cs" />
-    <Compile Include="Form2.cs" />
-    <Compile Include="MyException.cs" />
     <Compile Include="Quiz.cs" />
     <Compile Include="TestRun.cs" />
     <Compile Include="WindowTest.cs" />
     <Compile Include="WibdowTestEdit.cs" />
-    <Compile Include="CheckBoxExample.cs" />
     <Compile Include="Authorization.cs" />
     <Compile Include="ShowRezults.cs" />
   </ItemGroup>

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace SecondForms
+namespace Quize
 {
     public class MyException : Exception
     {   public  string Message1 { get; set; }

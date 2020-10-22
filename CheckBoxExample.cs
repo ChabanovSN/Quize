@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Data;
 using System.IO;
-namespace SecondForms
+namespace Quize
 {
    
       

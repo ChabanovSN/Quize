@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace SecondForms
+namespace Quize
 {
         static class LightsController
         {

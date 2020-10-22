@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-namespace SecondForms
+namespace Quize
 {
     public class WindowTest : Form
     {
@@ -53,6 +53,7 @@ namespace SecondForms
         }
         public void InitializeRadioButtons()
         {
+            BackColor = Color.BlanchedAlmond;
             StartPosition = FormStartPosition.CenterScreen;
             Name = "WindowTest";
             var currentSize = Font.SizeInPoints;
@@ -146,7 +147,7 @@ namespace SecondForms
             if (AnswerdBtn.Text == "Mеню")
             {
                
-                Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
+                Quiz ifrm = (Quize.Quiz)Application.OpenForms[0];
                 if (Thema !=null)
                 {
                     try

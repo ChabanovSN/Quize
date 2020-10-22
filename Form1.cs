@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SecondForms
+namespace Quize
 {
 
     public class Form1 : Form

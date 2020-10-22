@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace SecondForms
+namespace Quize
 {
     class MyContext : SynchronizationContext
     {

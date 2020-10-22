@@ -1,8 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
+  <configuration>
+    <images-root-path>..</images-root-path>
+  </configuration>
   <import>
     <widget-library name="../bin/Debug/SecondForms.exe" internal="true" />
   </import>
+  <icon-factory>
+    <icon-set id="start">
+      <source>
+        <property name="Image">stock:gtk-about Menu</property>
+      </source>
+    </icon-set>
+  </icon-factory>
   <widget class="Gtk.Window" id="MainWindow" design-size="400 300">
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace SecondForms
+namespace Quize
 {
     public class Quiz : Form
     {
@@ -288,9 +288,7 @@ namespace SecondForms
             var currentSize = Font.SizeInPoints;
             currentSize += 3;
             BackColor = Color.Aqua;
-            Font = new Font(Font.Name, currentSize, Font.Style);
-            System.ComponentModel.ComponentResourceManager resources =
-              new System.ComponentModel.ComponentResourceManager(typeof(Form2));
+            Font = new Font(Font.Name, currentSize, Font.Style);           
             CheckedListBoxTest = new CheckedListBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             mCreatFiles = new System.Windows.Forms.ToolStripButton();           

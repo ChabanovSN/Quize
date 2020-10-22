@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 
-namespace SecondForms
+namespace Quize
 {
     public class WindowTestEdit : Form
     {
@@ -314,7 +314,7 @@ namespace SecondForms
             if (EditCreateListTests())
             {
                 _Write();
-                Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
+                Quiz ifrm = (Quize.Quiz)Application.OpenForms[0];
                 if (ifrm is Quiz quiz)
                 {
                     quiz.ShoosFile_Click();
@@ -414,7 +414,7 @@ namespace SecondForms
         }
         void Cancel_Click(object sender, EventArgs e)
         {
-            Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
+            Quiz ifrm = (Quize.Quiz)Application.OpenForms[0];
             if (ifrm is Quiz quiz)
             {
                 quiz.ShoosFile_Click();

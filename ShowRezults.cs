@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
-namespace SecondForms
+namespace Quize
 {
     public class ShowRezults:Form
     {
         public ShowRezults(User user)
-        {  
+        {
+            BackColor = Color.BlanchedAlmond;
+            StartPosition = FormStartPosition.CenterScreen;
+            var currentSize = Font.SizeInPoints;
+            currentSize += 3;
+            Font = new Font(Font.Name, currentSize,
+                 Font.Style);
             this.Text = $"Результаты викторины для {user.Login}";
             ListBox listBox1 = new ListBox
             {
@@ -27,6 +34,12 @@ namespace SecondForms
         }
         public ShowRezults(List<User> users,string thema)
         {
+            BackColor = Color.BlanchedAlmond;
+            StartPosition = FormStartPosition.CenterScreen;
+            var currentSize = Font.SizeInPoints;
+            currentSize += 3;
+            Font = new Font(Font.Name, currentSize,
+                 Font.Style);
             this.Text = $"Тема {thema}. Топ 20";
             ListBox listBox1 = new ListBox
             {

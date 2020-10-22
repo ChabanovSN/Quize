@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 
-namespace SecondForms
+namespace Quize
 {
     public class Authorization:Form
     {
@@ -33,6 +33,7 @@ namespace SecondForms
 
         }
         void Init() {
+            BackColor = Color.BlanchedAlmond;
             StartPosition = FormStartPosition.CenterScreen;
             Name = "Authorization";
             int width = this.Width / 2-50;
@@ -176,7 +177,7 @@ namespace SecondForms
             _Write();
             if (CheckUser(correctUser.Login, correctUser.Password) != null)
             {
-                Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
+                Quiz ifrm = (Quize.Quiz)Application.OpenForms[0];
                 ifrm.SetUser(correctUser);
                 ifrm.Show();
                 this.Close();
@@ -200,7 +201,7 @@ namespace SecondForms
         {
           User user=  CheckUser(LoginText.Text.Trim(), PaswordText.Text.Trim());
             if(user != null) {
-                Quiz ifrm = (SecondForms.Quiz)Application.OpenForms[0];
+                Quiz ifrm = (Quize.Quiz)Application.OpenForms[0];
                 ifrm.SetUser(user);
                 ifrm.Show();
                 this.Hide();
